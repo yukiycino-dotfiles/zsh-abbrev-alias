@@ -4,6 +4,11 @@ _ABBREV_ALIAS_VERSION='0.1.0'
 
 typeset -Ag _abbrev_aliases
 
+__abbrev_alias::magic_abbrev_expand_and_space() {
+  zle __abbrev_alias::magic_abbrev_expand
+  zle self-insert
+}
+
 __abbrev_alias::magic_abbrev_expand() {
   local MATCH
   LBUFFER=${LBUFFER%%(#m)[-_a-zA-Z0-9]#}
@@ -16,7 +21,6 @@ __abbrev_alias::magic_abbrev_expand() {
     newbuffer=$MATCH
   fi
   LBUFFER+=$newbuffer
-  zle self-insert
 }
 
 __abbrev_alias::no_magic_abbrev_expand() {
@@ -25,6 +29,7 @@ __abbrev_alias::no_magic_abbrev_expand() {
 
 __abbrev_alias::init() {
   setopt extended_glob
+  zle -N __abbrev_alias::magic_abbrev_expand_and_space
   zle -N __abbrev_alias::magic_abbrev_expand
   zle -N __abbrev_alias::no_magic_abbrev_expand
   bindkey " "   __abbrev_alias::magic_abbrev_expand
